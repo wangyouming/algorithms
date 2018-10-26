@@ -30,3 +30,82 @@ int _binarySearch_recursive(int a[], int low, int high, int value) {
 int binarySearch_recursive(int a[], int n, int value) {
     return _binarySearch_recursive(a, 0, n-1, value);
 }
+
+int binarySearchFirstEqual(int a[], int n, int value) {
+    int low = 0;
+    int high = n - 1;
+    while (low <= high) {
+        int mid = low + ((high - low) >> 1);
+        if (a[mid] > value) {
+            high = mid - 1;
+        } else if (a[mid] < value) {
+            low = mid + 1;
+        } else {
+            if ((mid == 0) || a[mid - 1] != value) return mid;
+            else high = mid - 1;
+        }
+    }
+    return -1;
+}
+
+int binarySearchFirstEqual_(int a[], int n, int value) {//更简洁，但是不太好理解
+    int low = 0;
+    int high = n - 1;
+    while (low <= high) {
+        int mid = low + ((high - low) >> 1);
+        if (a[mid] >= value) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    if (a[low] == value) return low;
+    return -1;
+}
+
+int binarySearchLastEqual(int a[], int n, int value) {
+    int low = 0;
+    int high = n - 1;
+    while (low <= high) {
+        int mid = low + ((high - low) >> 1);
+        if (a[mid] > value) {
+            high = mid - 1;
+        } else if (a[mid] < value) {
+            low = mid + 1;
+        } else {
+            if ((mid == n - 1 ) || a[mid - 1] != value) return mid;
+            else low = mid + 1;
+        }
+    }
+    return -1;
+}
+
+int binarySearchFirstGreaterOrEqual(int a[], int n, int value) {
+    int low = 0;
+    int high = n - 1;
+    while (low <= high) {
+        int mid = low + ((high - low) >> 1);
+        if (a[mid] >= value) {
+            if ((mid == 0) || a[mid - 1] < value) return mid;
+            else high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    return -1;
+}
+
+int binarySearchLastLessOrEqual(int a[], int n, int value) {
+    int low = 0;
+    int high = n - 1;
+    while (low <= high) {
+        int mid = low + ((high - low) >> 1);
+        if (a[mid] > value) {
+            high = mid - 1;
+        } else {
+            if ((mid == n - 1) || (a[mid] + 1 > value)) return mid;
+            else low = mid + 1;
+        }
+    }
+    return -1;
+}
