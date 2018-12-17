@@ -60,14 +60,10 @@ class Solution:
     
     def maxNumberOfArray(self, nums, length):
         res = []
-        start = 0
-        while len(res) < length:
-            max_index  = start
-            for i in range(start, len(nums) - (length - len(res) - 1)):
-                if nums[i] > nums[max_index]:
-                    max_index = i
-            start = max_index + 1
-            res.append(nums[max_index])
+        for idx, num in enumerate(nums):
+            while res and length-idx+len(res) > length and num > res[-1]:
+                res.pop()
+            if len(res) < length: res.append(num)
 
         return res
 
