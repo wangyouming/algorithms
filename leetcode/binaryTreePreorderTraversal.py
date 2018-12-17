@@ -15,7 +15,6 @@ Follow up: Recursive solution is trivial, could you do it iteratively?
 
 URL: https://leetcode.com/problems/binary-tree-preorder-traversal/
 """
-from collections import deque
 
 # Definition for a binary tree node.
 class TreeNode:
@@ -30,15 +29,30 @@ class Solution:
         :type root: TreeNode
         :rtype: List[int]
         """
-        if not root: return []
-        q = deque()
-        q.append(root)
+        return self.preorderTraversal_1(root)
+
+    def preorderTraversal_1(self, root):
+        cur = root
         ret = []
-        while q:
-            current = q.pop()
+        stack = [] #等待处理右节点的节点
+        while cur or stack:
+            if cur:
+                stack.append(cur)
+                ret.append(cur.val)
+                cur = cur.left
+            else:
+                cur = stack.pop().right
+        return ret
+
+    def preorderTraversal_0(self, root):
+        if not root: return []
+        stack = [root] #等待处理的节点
+        ret = []
+        while stack:
+            current = stack.pop()
             ret.append(current.val)
             if current.right:
-                q.append(current.right)
+                stack.append(current.right)
             if current.left:
-                q.append(current.left)
+                stack.append(current.left)
         return ret
