@@ -59,16 +59,14 @@ class Solution:
         return self.mergeTwoArrays(self.maxNumberOfArray(nums1, len1), self.maxNumberOfArray(nums2, len2))
     
     def maxNumberOfArray(self, nums, length):
-        res = []
-        start = 0
-        while len(res) < length:
-            max_index  = start
-            for i in range(start, len(nums) - (length - len(res) - 1)):
-                if nums[i] > nums[max_index]:
-                    max_index = i
-            start = max_index + 1
-            res.append(nums[max_index])
-
+        res = [0 for _ in range(length)]
+        index = 0
+        for idx, num in enumerate(nums):
+            while len(nums) - idx - 1 + index + 1 > length and index > 0 and num > res[index - 1]:
+                index -= 1
+            if index < length:
+                res[index] = num
+                index += 1
         return res
 
     def mergeTwoArrays(self, nums1, nums2):
