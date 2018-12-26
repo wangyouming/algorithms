@@ -29,6 +29,7 @@ class Solution:
         :type root: TreeNode
         :rtype: List[int]
         """
+        return self.preorderTraversal_0(root)
         return self.preorderTraversal_1(root)
 
     def preorderTraversal_1(self, root):

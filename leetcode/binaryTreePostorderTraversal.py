@@ -25,18 +25,36 @@ class TreeNode:
 
 class Solution:
     def postorderTraversal(self, root):
+        return self.postorderTraversal_0(root)
+        return self.postorderTraversal_1(root)
+
+    def postorderTraversal_1(self, root):
+        if not root: return []
+        stack = [root]
+        res = []
+        while stack:
+            node = stack.pop()
+            res.append(node.val)
+            if node.left:
+                stack.append(node.left)
+            if node.right:
+                stack.append(node.right)
+        return res[::-1]
+
+    def postorderTraversal_0(self, root):
         """
         :type root: TreeNode
         :rtype: List[int]
         """
-        res = []
+        from collections import deque
+        res = deque()
         curr = root
         stack = []
         while curr or stack:
             if curr:
-                res.insert(0, curr.val)
+                res.appendleft(curr.val)
                 stack.append(curr)
                 curr = curr.right
             else:
                 curr = stack.pop().left
-        return res
+        return list(res)
