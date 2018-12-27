@@ -26,6 +26,7 @@ You may assume that row1 ≤ row2 and col1 ≤ col2.
 URL: https://leetcode.com/problems/range-sum-query-2d-immutable/
 """
 
+
 class NumMatrix:
 
     def __init__(self, matrix):
@@ -37,15 +38,13 @@ class NumMatrix:
         cols = len(matrix[0])
         self.sum = [[0 for _ in range(cols)] for _ in range(rows)]
         for row in range(rows):
+            rowSum = 0
             for col in range(cols):
-                if row == 0 and col == 0:
-                    self.sum[row][col] = matrix[row][col]
-                elif row == 0:
-                    self.sum[row][col] = self.sum[row][col-1] + matrix[row][col]
-                elif col == 0:
-                    self.sum[row][col] = self.sum[row-1][col] + matrix[row][col]
+                rowSum += matrix[row][col]
+                if row == 0:
+                    self.sum[row][col] = rowSum
                 else:
-                    self.sum[row][col] = self.sum[row-1][col] + self.sum[row][col-1] - self.sum[row-1][col-1] + matrix[row][col]
+                    self.sum[row][col] = rowSum + self.sum[row-1][col]
 
     def sumRegion(self, row1, col1, row2, col2):
         """
@@ -77,7 +76,6 @@ if __name__ == '__main__':
     assert(m.sumRegion(1, 1, 2, 2) == 11)
     assert(m.sumRegion(2, 1, 4, 3) == 8)
     assert(m.sumRegion(1, 2, 2, 4) == 12)
-    print('hello world')
 
 # Your NumMatrix object will be instantiated and called as such:
 # obj = NumMatrix(matrix)
