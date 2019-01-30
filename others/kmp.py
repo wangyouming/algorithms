@@ -1,6 +1,6 @@
 class KMP:
-    def getNexts(self, pattern):
-        self.next = [-1 for _ in range(len(pattern))]
+    def getNexts(self, pattern: str):
+        self.next = [-1] * len(pattern)
         k = -1
         i = 1
         while i < len(pattern):
@@ -11,7 +11,7 @@ class KMP:
             self.next[i] = k
             i += 1
         
-    def index(self, candidate, pattern):
+    def index(self, candidate: str, pattern: str):
         self.getNexts(pattern)
         i = 0
         j = 0
