@@ -64,7 +64,11 @@ def min_distance_dp_st_memo(weights: List[List[int]]) -> int:
     return current_level[-1]
 
 def min_distance_dp_fn(weights: List[List[int]]) -> int:
+    memo = {}
     def _min_distance_dp_fn(i, j):
+        key = '{}-{}'.format(i, j)
+        if key in memo: return memo[key]
+
         if i == 0 or j == 0:
             if i == 0 and j == 0:
                 return weights[0][0]
@@ -73,7 +77,9 @@ def min_distance_dp_fn(weights: List[List[int]]) -> int:
             else:
                 return _min_distance_dp_fn(i-1, j) + weights[i][j]
         else:
-            return min(_min_distance_dp_fn(i, j-1), _min_distance_dp_fn(i-1, j)) + weights[i][j]
+            res = min(_min_distance_dp_fn(i, j-1), _min_distance_dp_fn(i-1, j)) + weights[i][j]
+            memo[key] = res
+            return res
     return _min_distance_dp_fn(len(weights)-1, len(weights[0])-1) 
 
 if __name__ == '__main__':
