@@ -1,161 +1,151 @@
 from typing import List
 
-max_weight = 0
-item_weights = [2, 2, 4, 6, 3]
-knapsack_capacity = 9
+def knapsack_max_weight_bt(weights: List[int], capacity: int) -> int:
+    mem = set()
+    max_weight = 0
+    def _knapsack_max_weight_bt(cur_idx: int, cur_weight: int):
+        key = '{}-{}'.format(cur_idx, cur_weight)
+        if key in mem: return
+        mem.add(key)
 
-#backtrace solution
-def knapsack_max_weight_bt(current_idx: int, current_weight: int):
-    global max_weight, item_weights, knapsack_capacity
-    if current_weight == knapsack_capacity or current_idx == len(item_weights):
-        if current_weight >= max_weight:
-            max_weight = current_weight
-        return
+        nonlocal max_weight
+        if cur_idx == len(weights) or cur_weight == capacity:
+            max_weight = max(max_weight, cur_weight)
+            return
+        _knapsack_max_weight_bt(cur_idx+1, cur_weight)
+        if cur_weight+weights[cur_idx] <= capacity:
+            _knapsack_max_weight_bt(cur_idx+1, cur_weight+weights[cur_idx])
     
-    knapsack_max_weight_bt(current_idx + 1, current_weight)
-    if current_weight + item_weights[current_idx] <= knapsack_capacity:
-        knapsack_max_weight_bt(current_idx + 1, current_weight + item_weights[current_idx])
+    _knapsack_max_weight_bt(0, 0)
+    return max_weight
 
-#backtrace solution with memory optimization
-memo = [[False] * len(item_weights)] * knapsack_capacity
-def knapsack_max_weight_bt_memo_opti(current_idx: int, current_weight: int):
-    global max_weight, item_weights, knapsack_capacity, memo
-    if memo[current_idx][current_weight]: return
-    memo[current_idx][current_weight] = True
-    if current_weight == knapsack_capacity or current_idx == len(item_weights):
-        if current_weight >= max_weight:
-            max_weight = current_weight
-        return
-    
-    knapsack_max_weight_bt_memo_opti(current_idx + 1, current_weight)
-    if current_weight + item_weights[current_idx] <= knapsack_capacity:
-        knapsack_max_weight_bt_memo_opti(current_idx + 1, current_weight + item_weights[current_idx])
-
-#dynamic programming solution: states figure
-def knapsack_max_weight_dp(item_weights: List[int], knapsack_capcity: int):
-    states = [[False] * (knapsack_capacity + 1)] * len(item_weights)
+def knapsack_max_weight_dp_st(weights: List[int], capacity: int):
+    states = [[False] * (capacity + 1)] * len(weights)
     states[0][0] = True
-    states[0][item_weights[0]] = True
-    for i in range(1, len(item_weights)):
-        for j in range(knapsack_capacity + 1):
+    states[0][weights[0]] = True
+    for i in range(1, len(weights)):
+        for j in range(capacity + 1):
             if states[i-1][j]:
                 states[i][j] = True
-        for j in range(knapsack_capacity - item_weights[i] + 1):
+        for j in range(capacity - weights[i] + 1):
             if states[i-1][j]:
-                states[i][j+item_weights[i]] = True
+                states[i][j+weights[i]] = True
 
-    for idx, exist in enumerate(reversed(states[-1])):
-        if exist:
-            return len(states[-1]) - 1 - idx
-
+    for idx in range(capacity, -1, -1):
+        if states[-1][idx]:
+            return idx
     return 0
 
-#dynamic programming solution with memory optimization: states figure
-def knapsack_max_weight_dp_memo_opti(item_weights: List[int], knapsack_capacity: int):
-    states = [False] * (knapsack_capacity + 1)
+def knapsack_max_weight_dp_st_memo(weights: List[int], capacity: int):
+    states = [False] * (capacity + 1)
     states[0] = True
-    states[item_weights[0]] = True
-    for i in range(1, len(item_weights)):
-        #如果j从小到大，会重复
-        for j in range(knapsack_capacity - item_weights[i], 0, -1):
+    states[weights[0]] = True
+    for i in range(1, len(weights)):
+        for j in range(capacity - weights[i], 0, -1):
             if states[j]:
-                states[j + item_weights[i]] = True
+                states[j + weights[i]] = True
     
-    for idx, exist in enumerate(reversed(states)):
-        if exist:
-            return len(states) - 1 - idx
-    
+    for idx in range(capacity, -1, -1):
+        if states[idx]:
+            return idx
     return 0
 
-#dynamic programming: transfer states
-def knapsack_max_weight_dp_recur(item_weights: List[int], knapsack_capacity: int):
+def knapsack_max_weight_dp_fn(weights: List[int], capacity: int):
     #f(idx, w) = max(f(idx-1, w), f(idx-1, w-ws[idx]))
-    memo = {}
-    def _knapsack_max_weight_dp_recur(idx: int, knapsack_capacity: int):
-        key = '{}-{}'.format(idx, knapsack_capacity)
-        if key in memo:
-            return memo[key]
+    mem = {}
+    def _knapsack_max_weight_dp_fn(idx: int, capacity: int):
+        key = '{}-{}'.format(idx, capacity)
+        if key in mem:
+            return mem[key]
         if idx == 0:
-            if item_weights[idx] > knapsack_capacity: 
+            if weights[idx] > capacity: 
                 res = 0
             else: 
-                res = item_weights[idx]
+                res = weights[idx]
         else:
-            if knapsack_capacity < item_weights[idx]:
-                res = _knapsack_max_weight_dp_recur(idx-1, knapsack_capacity)
+            if capacity < weights[idx]:
+                res = _knapsack_max_weight_dp_fn(idx-1, capacity)
             else:
-                res = max(_knapsack_max_weight_dp_recur(idx-1, knapsack_capacity), _knapsack_max_weight_dp_recur(idx-1, knapsack_capacity- item_weights[idx]) + item_weights[idx])
-        memo[key] = res
+                res = max(_knapsack_max_weight_dp_fn(idx-1, capacity), _knapsack_max_weight_dp_fn(idx-1, capacity- weights[idx]) + weights[idx])
+        mem[key] = res
         return res
-    return _knapsack_max_weight_dp_recur(len(item_weights)-1, knapsack_capacity)
+    return _knapsack_max_weight_dp_fn(len(weights)-1, capacity)
 
-max_value = 0
-item_weights = [2, 2, 4, 6, 3]
-item_values = [3, 4, 8, 9, 6]
-knapsack_capacity = 9
+def knapsack_max_value_bt(weights: List[int], values: List[int], capacity: int) -> int:
+    max_value = 0
+    mem = {}
+    def _knapsack_max_value_bt(cur_idx: int, cur_weight: int, cur_value: int):
+        key = '{}-{}'.format(cur_idx, cur_weight)
+        if key in mem and cur_value < mem[key]: return
+        else: mem[key] = cur_value
 
-def knapsack_max_value_bt(current_idx: int, current_weight: int, current_value: int):
-    global max_value, item_weights, item_values, knapsack_capacity
-    if current_weight == knapsack_capacity or current_idx == len(item_weights):
-        if current_value > max_value:
-            max_value = current_value
-        return
-    knapsack_max_value_bt(current_idx + 1, current_weight, current_value)
-    if current_weight + item_weights[current_idx] <= knapsack_capacity:
-        knapsack_max_value_bt(current_idx + 1, current_weight + item_weights[current_idx], current_value + item_values[current_idx])
+        nonlocal max_value
+        if cur_weight == capacity or cur_idx == len(weights):
+            max_value = max(max_value, cur_value)
+            return
+        knapsack_max_value_bt(cur_idx+1, cur_weight, cur_value)
+        if cur_weight+weights[cur_idx] <= capacity:
+            _knapsack_max_value_bt(cur_idx+1, cur_weight+weights[cur_idx], cur_value+values[cur_idx])
+    
+    _knapsack_max_value_bt(0, 0, 0)
+    return max_value
 
-def knapsack_max_value_dp(item_weights: List[int], item_valus: List[int], knapsack_capcity: int):
-    states = [[-1] * (knapsack_capacity + 1)] * len(item_weights)
+def knapsack_max_value_dp_st(weights: List[int], valus: List[int], capacity: int):
+    states = [[-1] * (capacity + 1)] * len(weights)
     states[0][0] = 0
-    states[0][item_weights[0]] = item_values[0]
-    for i in range(1, len(item_weights)):
-        for j in range(knapsack_capacity + 1):
+    states[0][weights[0]] = values[0]
+    for i in range(1, len(weights)):
+        for j in range(capacity + 1):
             if states[i - 1][j] >= 0:
                 states[i][j] = states[i - 1][j]
-        for j in range(knapsack_capacity - item_weights[i] + 1):
+        for j in range(capacity - weights[i] + 1):
             if states[i - 1][j] >= 0:
-                v = states[i - 1][j] + item_values[i]
-                if v > states[i][j + item_weights[i]]:
-                    states[i][j + item_weights[i]] = v
+                v = states[i - 1][j] + values[i]
+                if v > states[i][j + weights[i]]:
+                    states[i][j + weights[i]] = v
     return max(states[-1])
 
-def knapsack_max_value_dp_memo_opti(item_weights: List[int], item_valus: List[int], knapsack_capcity: int):
-    states = [-1] * (knapsack_capacity + 1)
+def knapsack_max_value_dp_st_memo(weights: List[int], valus: List[int], capacity: int):
+    states = [-1] * (capacity + 1)
     states[0] = 0
-    states[item_weights[0]] = item_values[0]
-    for i in range(1, len(item_weights)):
-        for j in range(knapsack_capacity - item_weights[i], -1, -1):
-            v = states[j] + item_values[i]
-            if v > states[j + item_weights[i]]:
-                states[j + item_weights[i]] = v
+    states[weights[0]] = values[0]
+    for i in range(1, len(weights)):
+        for j in range(capacity - weights[i], -1, -1):
+            v = states[j] + values[i]
+            if v > states[j + weights[i]]:
+                states[j + weights[i]] = v
     return max(states)
 
-def knapsack_max_value_dp_recur(item_weights: List[int], item_values: List[int], knapsack_capacity: int):
-    #f(idx, capacity) = max(f(idx-1, capacity), f(idx-1, capacity-item_weights[idx])+item_values[idx])
-    memo = {}
-    def _knapsack_max_value_dp_recur(idx: int, knapsack_capacity: int):
-        key = '{}-{}'.format(idx, knapsack_capacity)
-        if key in memo:
-            return memo[key]
+def knapsack_max_value_dp_fn(weights: List[int], values: List[int], capacity: int):
+    #f(idx, capacity) = max(f(idx-1, capacity), f(idx-1, capacity-weights[idx])+values[idx])
+    mem = {}
+    def _knapsack_max_value_dp_fn(idx: int, capacity: int):
+        key = '{}-{}'.format(idx, capacity)
+        if key in mem:
+            return mem[key]
         if idx == 0:
-            if knapsack_capacity < item_weights[idx]:
+            if capacity < weights[idx]:
                 res = 0
             else:
-                res = item_values[idx]
+                res = values[idx]
         else:
-            if knapsack_capacity < item_weights[idx]:
-                res = _knapsack_max_value_dp_recur(idx-1, knapsack_capacity)
+            if capacity < weights[idx]:
+                res = _knapsack_max_value_dp_fn(idx-1, capacity)
             else:
-                res = max(_knapsack_max_value_dp_recur(idx-1, knapsack_capacity), _knapsack_max_value_dp_recur(idx-1, knapsack_capacity-item_weights[idx])+item_values[idx])
-        memo[key] = res
+                res = max(_knapsack_max_value_dp_fn(idx-1, capacity), _knapsack_max_value_dp_fn(idx-1, capacity-weights[idx])+values[idx])
+        mem[key] = res
         return res
-    return _knapsack_max_value_dp_recur(len(item_weights)-1, knapsack_capacity)
+    return _knapsack_max_value_dp_fn(len(weights)-1, capacity)
 
 if __name__ == '__main__':
-    print(knapsack_max_weight_dp(item_weights, knapsack_capacity))
-    print(knapsack_max_weight_dp_memo_opti(item_weights, knapsack_capacity))
-    print(knapsack_max_weight_dp_recur(item_weights, knapsack_capacity))
+    weights = [2, 2, 4, 6, 3]
+    values = [3, 4, 8, 9, 6]
+    capacity = 9
+    print(knapsack_max_weight_bt(weights, capacity))
+    print(knapsack_max_weight_dp_st(weights, capacity))
+    print(knapsack_max_weight_dp_st_memo(weights, capacity))
+    print(knapsack_max_weight_dp_fn(weights, capacity))
 
-    print(knapsack_max_value_dp(item_weights, item_values, knapsack_capacity))
-    print(knapsack_max_value_dp_memo_opti(item_weights, item_values, knapsack_capacity))
-    print(knapsack_max_value_dp_recur(item_weights, item_values, knapsack_capacity))
+    print(knapsack_max_value_dp_st(weights, values, capacity))
+    print(knapsack_max_value_dp_st_memo(weights, values, capacity))
+    print(knapsack_max_value_dp_fn(weights, values, capacity))
