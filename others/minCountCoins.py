@@ -23,16 +23,15 @@ def min_count_coins_bt(values: List[int], target: int) -> int:
     return min_count
 
 def min_count_coins_dp_st(values: List[int], target: int) -> int:
-    states = [-1]*(target+1)
-    states[0] = 0
+    mem = [0] * (target+1)
     for i in range(1, target+1):
         import sys
         min_num = sys.maxsize
         for value in values:
             if i >= value:
-                min_num = min(min_num, states[i - value]+1)
-        states[i] = min_num
-    return states[-1]
+                min_num = min(min_num, mem[i-value]+1)
+        mem[i] = min_num
+    return mem[-1]
 
 def min_count_coins_dp_fn(values: List[int], target: int) -> int:
     # f(target) = min(f(target-value0), f(target-value1), ...)
