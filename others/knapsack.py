@@ -51,7 +51,7 @@ def knapsack_max_weight_dp_st_memo(weights: List[int], capacity: int):
     return 0
 
 def knapsack_max_weight_dp_fn(weights: List[int], capacity: int):
-    #f(idx, w) = max(f(idx-1, w), f(idx-1, w-ws[idx]))
+    #f(idx, w) = max(f(idx-1, w), f(idx-1, w-ws[idx])+ws[idx])
     mem = {}
     def _knapsack_max_weight_dp_fn(idx: int, capacity: int):
         key = '{}-{}'.format(idx, capacity)
