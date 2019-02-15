@@ -48,8 +48,17 @@ def yh_triangle_dp_st_memo(nums: List[List[int]]) -> int:
                 states[j] = min(states[j-1], states[j]) + nums[i][j]
     return min(states)
 
+def yh_triangle_dp_bottom_up(nums: List[List[int]]) -> int:
+    n = len(nums)
+    states = nums[-1][:]
+    for i in range(n-2, -1, -1):
+        for j in range(i+1):
+            states[j] = min(states[j], states[j+1]) + nums[i][j]
+    return states[0]
+
 if __name__ == '__main__':
     nums = [[3], [2, 6], [5, 4, 2], [6, 0, 3, 2]]
     print(yh_triangle_bt(nums))
     print(yh_triangle_dp_st(nums))
     print(yh_triangle_dp_st_memo(nums))
+    print(yh_triangle_dp_bottom_up(nums))
