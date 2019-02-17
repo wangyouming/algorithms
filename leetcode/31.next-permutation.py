@@ -34,11 +34,8 @@ class Solution(object):
         :rtype: void Do not return anything, modify nums in-place instead.
         """
         i = len(nums) - 1
-        while i > 0:
-            if nums[i-1] < nums[i]:
-                found = True
-                break
-            i -= 1
+        while i > 0 and nums[i-1] >= nums[i]: i -= 1
+
         if i == 0:
             nums.reverse()
         else:
