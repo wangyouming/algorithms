@@ -41,15 +41,16 @@ class Solution(object):
         :type root: TreeNode
         :rtype: List[int]
         """
-        cur = root
-        stack = []
         res = []
-        while cur or stack:
-            while cur:
-                stack.append(cur)
-                cur = cur.left
-            cur = stack.pop()
-            res.append(cur.val)
-            cur = cur.right
+        stack = []
+        if root: stack.append((root, False))
+        while stack:
+            node, visited = stack.pop()
+            if visited:
+                res.append(node.val)
+            else:
+                if node.right: stack.append((node.right, False))
+                stack.append((node, True))
+                if node.left: stack.append((node.left, False))
         return res
         
