@@ -44,7 +44,9 @@ class Graph:
                 dfs(v)
 
 if __name__ == '__main__':
-    graph = Graph(2)
-    graph.add_edge(0, 1)
+    graph = Graph(4)
     graph.add_edge(1, 0)
+    graph.add_edge(2, 1)
+    graph.add_edge(1, 3)
+    graph.tsort_kahn()
     graph.tsort_dfs()
