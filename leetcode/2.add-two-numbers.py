@@ -44,29 +44,17 @@ class Solution(object):
         current = dummy
         carry = 0
 
-        while l1 and l2:
-            val = l1.val + l2.val + carry
-            carry = val / 10
-            val = val % 10
-            current.next = ListNode(val)
-            current = current.next
-            l1 = l1.next
-            l2 = l2.next
-
         while l1 or l2:
-            node = l1 if l1 else l2
-            val = node.val + carry
-            carry = val / 10
-            val = val % 10
-            current.next = ListNode(val)
+            x = l1.val if l1 else 0
+            y = l2.val if l2 else 0
+            s = carry + x + y
+            carry = s / 10
+            current.next = ListNode(s % 10)
             current = current.next
             if l1: l1 = l1.next
-            else: l2 = l2.next
+            if l2: l2 = l2.next
 
-        if carry > 0:
-            current.next = ListNode(carry)
-            current = current.next
+        if carry > 0: current.next = ListNode(carry)
 
-        current.next = None
         return dummy.next
         
