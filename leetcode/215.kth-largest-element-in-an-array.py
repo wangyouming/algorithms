@@ -31,9 +31,33 @@
 # You may assume k is always valid, 1 ≤ k ≤ array's length.
 # 
 #
+from typing import List
+
 class Solution:
     def findKthLargest(self, nums: 'List[int]', k: 'int') -> 'int':
-        return self.findKthLargest_2(nums, k)
+        return self.findKthLargest_3(nums, k)
+
+    def findKthLargest_3(self, nums: List[int], k: int) -> int:
+        import random
+        random.shuffle(nums)
+
+        def quickSelect(l: int, r: int) -> int:
+            pivot = nums[r]
+            left, right = l, r
+            #collapse wall
+            while left < right:
+                while nums[left] > pivot and left < right: left += 1
+                while nums[right] <= pivot and left < right: right -= 1
+                nums[left], nums[right] = nums[right], nums[left]
+            nums[left], nums[r] = nums[r], nums[left]
+            if left == k-1:
+                return nums[left]
+            elif left < k-1:
+                return quickSelect(left+1, r)
+            else:
+                return quickSelect(l, left-1)
+        
+        return quickSelect(0, len(nums)-1)
     
     def findKthLargest_2(self, nums, k):
         import heapq
@@ -55,4 +79,4 @@ class Solution:
     def findKthLargest_0(self, nums, k):
         nums.sort()
         return nums[-k]
-        
+
