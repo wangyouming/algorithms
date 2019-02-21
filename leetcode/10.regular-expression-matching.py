@@ -88,49 +88,44 @@ class Solution(object):
         :type p: str
         :rtype: bool
         """
-        return self.isMatch_1(s, p)
+        return self.isMatch_0(s, p)
+
+    def isMatch_2(self, text, pattern):
+        dp = [[False] * (len(pattern) +1) for _ in range(len(text)+1)]
+        dp[-1][-1] = True
+        for i in range(len(text), -1, -1):
+            for j in range(len(pattern)-1, -1, -1):
+                first_match = i < len(text) and pattern[j] in {text[i], '.'}
+                if j+1 < len(pattern) and pattern[j+1] == '*':
+                    dp[i][j] = dp[i][j+2] or first_match and dp[i+1][j]
+                else:
+                    dp[i][j] = first_match and dp[i+1][j+1]
+        return dp[0][0]
     
     def isMatch_1(self, text, pattern):
+        memo = {}
+        def dp(i, j):
+            if (i, j) in memo: return memo[i, j]
+            if j == len(pattern):
+                ans = i == len(text)
+            else:
+                first_match = i < len(text) and pattern[j] in {text[i], '.'}
+                if j+1 < len(pattern) and pattern[j+1] == '*':
+                    ans = dp(i, j+2) or (first_match and dp(i+1, j))
+                else:
+                    ans = first_match and dp(i+1, j+1)
+            memo[i, j] = ans
+            return ans
+        return dp(0, 0)
+    
+    def isMatch_0(self, text, pattern):
         if not pattern: return not text
         
         first_match = bool(text) and pattern[0] in {text[0], '.'}
-
         if len(pattern) >= 2 and pattern[1] == '*':
-            return (self.isMatch_1(text, pattern[2:]) or first_match and self.isMatch_1(text[1:], pattern))
+            return self.isMatch_1(text, pattern[2:]) or (first_match and self.isMatch_1(text[1:], pattern))
         else:
             return first_match and self.isMatch_1(text[1:], pattern[1:])
-
-    def isMatch_0(self, s, p):
-        global match
-        match = False
-        def backtrace(s_idx, p_idx):
-            global match
-            if match: return
-
-            if p_idx == len(p):
-                if s_idx == len(s):
-                    match = True
-                return
-
-            if p_idx < len(p)-1 and p[p_idx+1] == '*':
-                if s_idx == len(s):
-                    backtrace(s_idx, p_idx+2)
-                else:
-                    if p[p_idx] == '.':
-                        for i in range(s_idx, len(s)+1):
-                            backtrace(i, p_idx+2) 
-                    else:
-                        cnt = 0
-                        while s_idx+cnt < len(s) and s[s_idx+cnt] == p[p_idx]:
-                            cnt += 1
-                        for i in range(cnt+1):
-                            backtrace(s_idx+i, p_idx+2)
-            elif s_idx < len(s):
-                if p[p_idx] == '.' or s[s_idx] == p[p_idx]:
-                    backtrace(s_idx+1, p_idx+1)
-                
-        backtrace(0, 0)
-        return match 
 
 if __name__ == '__main__':
     solution = Solution()
