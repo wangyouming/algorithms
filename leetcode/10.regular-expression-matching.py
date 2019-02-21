@@ -88,6 +88,19 @@ class Solution(object):
         :type p: str
         :rtype: bool
         """
+        return self.isMatch_1(s, p)
+    
+    def isMatch_1(self, text, pattern):
+        if not pattern: return not text
+        
+        first_match = bool(text) and pattern[0] in {text[0], '.'}
+
+        if len(pattern) >= 2 and pattern[1] == '*':
+            return (self.isMatch_1(text, pattern[2:]) or first_match and self.isMatch_1(text[1:], pattern))
+        else:
+            return first_match and self.isMatch_1(text[1:], pattern[1:])
+
+    def isMatch_0(self, s, p):
         global match
         match = False
         def backtrace(s_idx, p_idx):
