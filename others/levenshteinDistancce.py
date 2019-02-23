@@ -1,8 +1,8 @@
-def levenshtein_distance_bt(word_0: str, word_1: str) -> int:
+def levenshtein_distance_0(word_0: str, word_1: str) -> int:
     import sys
     min_dist = sys.maxsize
     mem = {}
-    def _levenshtein_distance_bt(i, j, cur_dist):
+    def levenshtein_distance(i, j, cur_dist):
         key = "{}-{}".format(i, j)
         if key in mem and cur_dist > mem[key]:
             return
@@ -16,15 +16,15 @@ def levenshtein_distance_bt(word_0: str, word_1: str) -> int:
             return
 
         if word_0[i] == word_1[j]:
-            _levenshtein_distance_bt(i+1, j+1, cur_dist)
+            levenshtein_distance(i+1, j+1, cur_dist)
         else:
-            _levenshtein_distance_bt(i+1, j, cur_dist+1) # delete a[i] or add before b[j]
-            _levenshtein_distance_bt(i, j+1, cur_dist+1) # delete b[j] or add before a[i]
-            _levenshtein_distance_bt(i+1, j+1, cur_dist+1) # update a[i] or update b[j]
-    _levenshtein_distance_bt(0, 0, 0)
+            levenshtein_distance(i+1, j, cur_dist+1) # delete a[i] or add before b[j]
+            levenshtein_distance(i, j+1, cur_dist+1) # delete b[j] or add before a[i]
+            levenshtein_distance(i+1, j+1, cur_dist+1) # update a[i] or update b[j]
+    levenshtein_distance(0, 0, 0)
     return min_dist
 
-def levenshtein_distance_dp_fn(word_0: str, word_1: str) -> int:
+def levenshtein_distance_1(word_0: str, word_1: str) -> int:
     #advance from left
     #f(i, j) -> f(i+1, j) f(i, j+1) f(i+1, j+1)
     mem = {}
@@ -39,7 +39,7 @@ def levenshtein_distance_dp_fn(word_0: str, word_1: str) -> int:
         return res
     return _levenshtein_distance_dp_fn(0, 0)
 
-def levenshtein_distance_dp_matrix(word_0: str, word_1: str) -> int:
+def levenshtein_distance_2(word_0: str, word_1: str) -> int:
     '''
     advance from right
     if a[i] == b[j]:
@@ -47,28 +47,28 @@ def levenshtein_distance_dp_matrix(word_0: str, word_1: str) -> int:
     else:
         min_dist[i][j] = min(min_dist[i-1][j], min_dist[i][j-1], min_dist[i-1][j-1]) + 1
     '''
-    matrix = [[0] * len(word_1) for _ in range(len(word_0))]
+    dp = [[0] * len(word_1) for _ in range(len(word_0))]
     for i in range(len(word_0)):
-        if word_0[i] == word_1[0]: matrix[i][0] = i
-        elif i > 0: matrix[i][0] = matrix[i-1][0] + 1
-        else: matrix[i][0] = 1
+        if word_0[i] == word_1[0]: dp[i][0] = i
+        elif i > 0: dp[i][0] = dp[i-1][0] + 1
+        else: dp[i][0] = 1
     
     for j in range(len(word_1)):
-        if word_0[0] == word_1[j]: matrix[0][j] = j
-        elif j > 0: matrix[0][j] = matrix[0][j-1] + 1
-        else: matrix[0][j] = 1
+        if word_0[0] == word_1[j]: dp[0][j] = j
+        elif j > 0: dp[0][j] = dp[0][j-1] + 1
+        else: dp[0][j] = 1
 
     for i in range(1, len(word_0)):
         for j in range(1, len(word_1)):
             if word_0[i] == word_1[j]:
-                matrix[i][j] = min(matrix[i-1][j]+1, matrix[i][j-1]+1, matrix[i-1][j-1])
+                dp[i][j] = min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1])
             else:
-                matrix[i][j] = min(matrix[i-1][j], matrix[i][j-1], matrix[i-1][j-1]) + 1
-    return matrix[-1][-1]
+                dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+    return dp[-1][-1]
 
 if __name__ == '__main__':
-    word_0 = "helloworld"
-    word_1 = "takemefaraway"
-    print(levenshtein_distance_bt(word_0, word_1))
-    print(levenshtein_distance_dp_fn(word_0, word_1))
-    print(levenshtein_distance_dp_matrix(word_0, word_1))
+    word_0 = "hello world"
+    word_1 = "take me far away"
+    print(levenshtein_distance_0(word_0, word_1))
+    print(levenshtein_distance_1(word_0, word_1))
+    print(levenshtein_distance_2(word_0, word_1))
