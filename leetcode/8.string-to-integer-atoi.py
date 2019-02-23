@@ -85,33 +85,24 @@
 #
 class Solution:
     def myAtoi(self, str: str) -> int:
-        import re
-        match = re.match('^\s*?([-+]?\d+).*?$', str)
-        if match:
-            ans = int(match.group(1))
-            if ans > (1 << 31) - 1:
-                return (1 << 31) - 1
-            elif ans < -(1 << 31):
-                return -(1 << 31)
-            else:
-                return ans
-        else:
-            return 0
+        max_num, min_num = (1 << 31) - 1, -(1 << 31)
+        sign, base, i = 1, 0, 0
 
-if __name__ == '__main__':
-    solution = Solution()
+        while i < len(str) and str[i] == ' ': i += 1
+        if i == len(str): return 0
+        
+        if str[i] == '-' or str[i] == '+':
+            sign = -1 if str[i] == '-' else 1
+            i += 1
 
-    s = "42"
-    print(solution.myAtoi(s))
+        while i < len(str) and ord(str[i]) >= ord('0') and ord(str[i]) <= ord('9'):
+            num = ord(str[i]) - ord('0')
+            if sign == 1 and (base > max_num // 10 or (base == max_num // 10 and num > max_num % 10)):
+                return max_num
+            elif sign == -1 and (base > max_num // 10 or (base == max_num // 10 and num > max_num % 10 + 1)):
+                return min_num
+            base = base * 10 + num
+            i += 1
+        
+        return base * sign
 
-    s = "   -42"
-    print(solution.myAtoi(s))
-
-    s = "4193 with words"
-    print(solution.myAtoi(s))
-
-    s = "words and 987"
-    print(solution.myAtoi(s))
-
-    s = "-91283472332"
-    print(solution.myAtoi(s))
