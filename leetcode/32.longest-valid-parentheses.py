@@ -37,23 +37,62 @@ class Solution(object):
         :type s: str
         :rtype: int
         """
-        stack = []
-        regions = []
-        for idx, char in enumerate(s):
-            if char == '(':
-                stack.append((idx, char))
+        return self.longestValidParentheses_2(s)
+    
+    def longestValidParentheses_2(self, s):
+        left = right = ans = 0
+        for i in range(len(s)):
+            if s[i] == '(':
+                left += 1
             else:
-                if stack and stack[-1][1] == '(':
-                    regions.append((stack[-1][0], idx))
-                    while len(regions) >=2 and regions[-1][0] <= regions[-2][1]+1:
-                        right = regions.pop()
-                        left = regions.pop()
-                        regions.append((min(right[0], left[0]), right[1]))
-                    stack.pop()
-                else:
-                    stack.append((idx, char))
-        ans = 0
-        for region in regions:
-            ans = max(region[1]-region[0]+1, ans)
+                right += 1
+            if left == right:
+                ans = max(ans, 2*right)
+            elif right >= left:
+                left = right = 0
+        left = right = 0
+        for i in range(len(s)-1, -1, -1):
+            if s[i] == '(':
+                left += 1
+            else:
+                right += 1
+            if left == right:
+                ans = max(ans, 2*left)
+            elif left >= right:
+                left = right = 0
+        return ans
+    
+    def longestValidParentheses_1(self, s):
+        ans = 0 
+        dp = [0] * len(s)
+        for i in range(1, len(s)):
+            if s[i] == ')':
+                if s[i-1] == '(':
+                    dp[i] = dp[i-2] + 2 if i >= 2 else 2
+                elif i - dp[i-1] > 0 and s[i-dp[i-1]-1] == '(':
+                    #dp[i-1]+2+dp[i-dp[i-1]-2]
+                    dp[i] = dp[i-1] + 2 + (dp[i-dp[i-1]-2] if i-dp[i-1] >= 2 else 0)
+                ans = max(ans, dp[i])
         return ans
 
+    def longestValidParentheses_0(self, s):
+        ans = 0
+        stack = []
+        stack.append(-1)
+        for i in range(len(s)):
+            if s[i] == '(':
+                stack.append(i)
+            else:
+                stack.pop()
+                if not stack:
+                    stack.append(i)
+                else:
+                    ans = max(ans, i - stack[-1])
+        return ans
+
+if __name__ == '__main__':
+    solution = Solution()
+    s0 = "(()"
+    assert(solution.longestValidParentheses(s0) == 2)
+    s1 = ")()())"
+    assert(solution.longestValidParentheses(s1) == 4)
