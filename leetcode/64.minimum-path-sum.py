@@ -34,6 +34,9 @@ from typing import List
 
 class Solution:
     def minPathSum(self, grid: List[List[int]]) -> int:
+        return self.minPathSum_0(grid)
+    
+    def minPathSum_0(self, grid: List[List[int]]) -> int:
         mem = {}
         def dp(row: int, col: int) -> int:
             nonlocal mem
@@ -51,6 +54,3 @@ class Solution:
             mem[key] = ans
             return ans
         return dp(len(grid)-1, len(grid[0])-1)
-
-grid = [[1,3,1],[1,5,1],[4,2,1]]
-print(Solution().minPathSum(grid))
