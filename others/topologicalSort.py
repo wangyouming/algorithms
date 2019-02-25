@@ -18,11 +18,11 @@ class Graph:
         q = deque(filterfalse(lambda x: in_degree[x], range(self._num_vertices)))
         while q:
             v = q.popleft()
-            print(f"{v} ->", end="")
             for neighbor in self._adjacency[v]:
                 in_degree[neighbor] -= 1
                 if not in_degree[neighbor]:
                     q.append(neighbor)
+            print("{}{}".format(v, " -> " if q else '\n'), end="")
 
     def tsort_dfs(self) -> None:
         inverse_adjacency = [[] for _ in range(self._num_vertices)]
@@ -30,17 +30,21 @@ class Graph:
             for neighbor in self._adjacency[v]:
                 inverse_adjacency[neighbor].append(v)
         visited = [False] * self._num_vertices
+        not_visited_count = self._num_vertices
 
         def dfs(vertex: int) -> None:
+            nonlocal not_visited_count
             for v in inverse_adjacency[vertex]:
                 if not visited[v]:
                     visited[v] = True
+                    not_visited_count -= 1
                     dfs(v)
-            print(f"{vertex} ->", end="")
+            print("{}{}".format(vertex, " -> " if not_visited_count else "\n"), end="")
         
         for v in range(self._num_vertices):
             if not visited[v]:
                 visited[v] = True
+                not_visited_count -= 1
                 dfs(v)
 
 if __name__ == '__main__':
