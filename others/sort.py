@@ -9,7 +9,7 @@ def bubbleSort(nums: List[int]):
         for j in range(n - i - 1):
             if nums[j] > nums[j+1]:
                 nums[j], nums[j+1] = nums[j+1], nums[j]
-            flag = True
+                flag = True
         if not flag: break
 
 def insertionSort(nums: List[int]):
@@ -33,7 +33,7 @@ def selectionSort(nums: List[int]):
         idx = i
         for j in range(i+1, n):
             if nums[j] < nums[idx]:
-                idx = i
+                idx = j
         if i != idx:
             nums[i], nums[idx] = nums[idx], nums[i]
         
@@ -51,14 +51,14 @@ def mergeSort(nums: List[int]):
                 k += 1
                 j +=1
         
-        start = i, end = q
-        if j <= r: start = j, end = r
-        tmp[k, end-start+1] = nums[start: end-start+1]
-        nums[:] = tmp[:]
+        start, end = i, q+1 
+        if j <= r: start, end = j, r+1
+        tmp[k:] = nums[start:end]
+        nums[p:r+1] = tmp[:]
         
     def _mergeSort(nums: List[int], p: int, r: int):
         if p >= r: return
-        q = p + (r - p) >> 2
+        q = p + ((r - p) >> 1)
         _mergeSort(nums, p, q)
         _mergeSort(nums, q+1, r)
         _merge(nums, p, q, r)
@@ -102,3 +102,31 @@ def countingSort(nums: List[int]):
         counts[nums[i]] -= 1
 
     nums[:] = tmp[:]
+
+if __name__ == '__main__':
+    import random
+    nums = [2, 5, 1, 3]
+    
+    random.shuffle(nums)
+    bubbleSort(nums)
+    print(nums)
+
+    random.shuffle(nums)
+    insertionSort(nums)
+    print(nums)
+
+    random.shuffle(nums)
+    selectionSort(nums)
+    print(nums)
+
+    random.shuffle(nums)
+    mergeSort(nums)
+    print(nums)
+
+    random.shuffle(nums)
+    quickSort(nums)
+    print(nums)
+
+    random.shuffle(nums)
+    countingSort(nums)
+    print(nums)
