@@ -65,11 +65,11 @@ class SkipList:
         return '->'.join(values)
 
 if __name__ == '__main__':
-    l = SkipList()
+    skip_list = SkipList()
     for i in range(10):
-        l.insert(i)
-    print(l)
-    p = l.find(7)
+        skip_list.insert(i)
+    print(skip_list)
+    p = skip_list.find(7)
     print(p._data)
-    l.delete(3)
-    print(l)
+    skip_list.delete(3)
+    print(skip_list)
