@@ -1,90 +1,87 @@
 from typing import List
 
-def min_distance_bt(weights: List[List[int]]) -> int:
+def min_distance_0(matrix: List[List[int]]) -> int:
     import sys
     min_dist = sys.maxsize
-    memo = {}
-    m, n = len(weights), len(weights[0])
-    def _min_distance_bt(i: int, j: int, cur_dist: int):
+    mem = {}
+    m, n = len(matrix), len(matrix[0])
+    def bt(i: int, j: int, cur_dist: int):
+        nonlocal min_dist, mem
         if i >= m or j >= n: return
-        
-        nonlocal min_dist
         key = '{}-{}'.format(i, j)
-        if key in memo and memo[key] < cur_dist:
+        if key in mem and cur_dist >= mem[key]:
             return
         else:
-            memo[key] = cur_dist
-
-        cur_dist += weights[i][j]
+            mem[key] = cur_dist
+        
+        cur_dist += matrix[i][j]
         if i == m-1 and j == n-1:
             min_dist = min(min_dist, cur_dist)
         else:
-            _min_distance_bt(i+1, j, cur_dist)
-            _min_distance_bt(i, j+1, cur_dist)
-        
-    _min_distance_bt(0, 0, 0)
-
+            bt(i+1, j, cur_dist)
+            bt(i, j+1, cur_dist)
+    
+    bt(0, 0, 0)
     return min_dist
 
-def min_distance_dp_st(weights: List[List[int]]) -> int:
-    m, n = len(weights), len(weights[0])
-    states = [[0] * n for _ in range(m)]
+def min_distance_1(matrix: List[List[int]]) -> int:
+    m, n = len(matrix), len(matrix[0])
+    dp = [[0] * n for _ in range(m)]
+
     sum = 0
     for j in range(n):
-        sum += weights[0][j]
-        states[0][j] = sum
+        sum += matrix[0][j]
+        dp[0][j] = sum
     
     sum = 0
     for i in range(m):
-        sum += weights[i][0]
-        states[i][0] = sum
+        sum += matrix[i][0]
+        dp[i][0] = sum
     
     for i in range(1, m):
         for j in range(1, n):
-            states[i][j] = min(states[i-1][j], states[i][j-1]) + weights[i][j]
+            dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + matrix[i][j]
     
-    return states[-1][-1]
+    return dp[-1][-1]
 
-def min_distance_dp_st_memo(weights: List[List[int]]) -> int:
-    m, n = len(weights), len(weights[0])
+def min_distance_2(matrix: List[List[int]]) -> int:
+    m, n = len(matrix), len(matrix[0])
 
-    last_level = [0] * n
+    pre_dp = [0] * n
     sum = 0
     for j in range(n):
-        sum += weights[0][j]
-        last_level[j] = sum
+        sum += matrix[0][j]
+        pre_dp[j] = sum
     
-    current_level = last_level[:]
+    cur_dp = pre_dp[:]
     for i in range(1, m):
-        current_level[0] = last_level[0] + weights[i][0]
+        cur_dp[0] = pre_dp[0] + matrix[i][0]
         for j in range(1, n):
-            current_level[j] = min(current_level[j-1], last_level[j]) + weights[i][j]
-        last_level = current_level[:]
+            cur_dp[j] = min(cur_dp[j-1], pre_dp[j]) + matrix[i][j]
+        pre_dp = cur_dp[:]
+    return cur_dp[-1]
 
-    return current_level[-1]
-
-def min_distance_dp_fn(weights: List[List[int]]) -> int:
-    memo = {}
-    def _min_distance_dp_fn(i, j):
+def min_distance_3(matrix: List[List[int]]) -> int:
+    m, n = len(matrix), len(matrix[0])
+    mem = {}
+    def dp(i: int, j: int) -> int:
+        nonlocal mem
         key = '{}-{}'.format(i, j)
-        if key in memo: return memo[key]
-
+        if key in mem: return mem[key]
+        
         if i == 0 or j == 0:
-            if i == 0 and j == 0:
-                return weights[0][0]
-            elif i == 0:
-                return _min_distance_dp_fn(i, j-1) + weights[i][j]
-            else:
-                return _min_distance_dp_fn(i-1, j) + weights[i][j]
+            if i == 0 and j == 0: return matrix[i][j]
+            elif i == 0: return dp(i, j-1) + matrix[i][j]
+            elif j == 0: return dp(i-1, j) + matrix[i][j]
         else:
-            res = min(_min_distance_dp_fn(i, j-1), _min_distance_dp_fn(i-1, j)) + weights[i][j]
-            memo[key] = res
-            return res
-    return _min_distance_dp_fn(len(weights)-1, len(weights[0])-1) 
+            ans = min(dp(i, j-1), dp(i-1, j)) + matrix[i][j]
+            mem[key] = ans
+            return ans
+    return dp(m-1, n-1)
 
 if __name__ == '__main__':
-    weights = [[1, 3, 5, 9], [2, 1, 3, 4], [5, 2, 6, 7], [6, 8, 4, 3]]
-    print(min_distance_bt(weights))
-    print(min_distance_dp_st(weights))
-    print(min_distance_dp_st_memo(weights))
-    print(min_distance_dp_fn(weights))
+    matrix = [[1, 3, 5, 9], [2, 1, 3, 4], [5, 2, 6, 7], [6, 8, 4, 3]]
+    print(min_distance_0(matrix))
+    print(min_distance_1(matrix))
+    print(min_distance_2(matrix))
+    print(min_distance_3(matrix))
