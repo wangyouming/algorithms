@@ -38,20 +38,31 @@ from typing import List
 
 class Solution:
     def coinChange(self, coins: List[int], amount: int) -> int:
-        mem = {}
-        mem[0] = 0
-        def dp(target: int) -> int:
-            nonlocal mem
-            if target in mem: return mem[target]
-            if target < 0: return -1
-            ans = -1
+        return self.coinChange_0(coins, amount)
+    
+    def coinChange_0(self, coins: List[int], amount: int) -> int:
+        dp = [-1] * (amount + 1)
+        dp[0] = 0
+        for i in range(1, amount+1):
+            min_cnt = -1
             for coin in coins:
-                cnt = dp(target - coin)
-                if cnt != -1 and (ans == -1 or cnt < ans):
-                    ans = cnt
-            if ans != -1:
-                ans += 1
-            mem[target] = ans
-            return ans
-        return dp(amount)
+                if i >= coin and dp[i-coin] != -1:
+                    if min_cnt == -1 or min_cnt > dp[i-coin]+1:
+                        min_cnt = dp[i-coin] + 1
+            dp[i] = min_cnt
+        return dp[-1]
 
+    def coinChange_1(self, coins: List[int], amount: int) -> int:
+        mem = {}
+        def dp(amount: int) -> int:
+            if amount == 0: return 0
+            if amount in mem: return mem[amount]
+            min_cnt = -1
+            for coin in coins:
+                if coin <= amount:
+                    left_cnt = dp(amount - coin)
+                    if left_cnt != -1 and (min_cnt == -1 or min_cnt > left_cnt + 1):
+                        min_cnt = left_cnt + 1
+            mem[amount] = min_cnt
+            return min_cnt
+        return dp(amount)
