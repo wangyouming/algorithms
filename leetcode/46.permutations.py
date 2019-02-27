@@ -35,28 +35,11 @@ class Solution(object):
         :type nums: List[int]
         :rtype: List[List[int]]
         """
-        return self.permute_0(nums)
-
-    def permute_1(self, nums):
         perms = [[]]
         for num in nums:
             new_perms = []
             for perm in perms:
                 for i in range(len(perm)+1):
-                    new_perms.append(perm[:i]+[num]+perm[i:])
+                    new_perms.append(perm[:i] + [num] + perm[i:])
             perms = new_perms
         return perms
-    
-    def permute_0(self, nums):
-        res = []
-        def backtrace(cur_nums):
-            if len(cur_nums) == len(nums):
-                res.append(cur_nums[:])
-                return
-            for i in range(len(nums)):
-                if nums[i] in cur_nums: continue
-                cur_nums.append(nums[i])
-                backtrace(cur_nums)
-                cur_nums.pop()
-        backtrace([])
-        return res
