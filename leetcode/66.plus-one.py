@@ -41,14 +41,16 @@ from typing import List
 
 class Solution:
     def plusOne(self, digits: List[int]) -> List[int]:
+        if not digits: return []
         carry = 1
-        from collections import deque
-        q = deque()
-        for num in reversed(digits):
-            num += carry
-            q.appendleft(num % 10)
-            carry = 1 if num >= 10 else 0
-        if carry > 0:
-            q.appendleft(carry)
-        return list(q)
+        for i in range(len(digits)-1, -1, -1):
+            s = digits[i] + carry
+            if s < 10:
+                digits[i] = s
+                carry = 0
+                break
+            else:
+                digits[i] = s % 10
+                carry = 1
+        return digits if carry == 0 else [1] + digits
 
