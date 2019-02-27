@@ -59,43 +59,7 @@ class Solution(object):
         :type prices: List[int]
         :rtype: int
         """
-        return self.maxProfit_1(prices)
-        return self.maxProfit_0(prices)
-
-    def maxProfit_0(self, prices):
-        if len(prices) <= 1: return 0
-        profit = 0
-        for i in range(len(prices)):
-            profit += max(0, prices[i]-prices[i-1])
-        return profit
-    
-    def maxProfit_1(self, prices):
-        states = set()
-        states.add((0, False))
-        for i in range(len(prices)):
-            new_states = set()
-            for left, bought in states:
-                if bought:
-                    left += prices[i]
-                    new_states.add((left, False))
-                else:
-                    left -= prices[i]
-                    new_states.add((left, True))
-            states.update(new_states)
-
-            max_bought = None
-            max_not_bought = None
-            for left, bought in states:
-                if bought:
-                    if max_bought is None or left > max_bought: max_bought = left
-                else:
-                    if max_not_bought is None or left > max_not_bought: max_not_bought = left
-            states = set()
-            if max_bought is not None: states.add((max_bought, True))
-            if max_not_bought is not None: states.add((max_not_bought, False))
-            
-        profit = 0
-        for left, bought in states:
-            if left > profit: profit = left
-        return profit
-    
+        ans = 0
+        for i in range(1, len(prices)):
+            ans += max(0, prices[i] - prices[i-1])
+        return ans
