@@ -37,49 +37,14 @@ class Solution(object):
         :type n: int
         :rtype: ListNode
         """
-        return self.reverseBetween_1(head, m, n)
-    
-    def reverseBetween_1(self, head, m, n):
-        dummy = ListNode(-1)
-        dummy.next = head
-
-        before = dummy
-        for _ in range(m-1):
-            before = before.next
-
-        first = None
-        if before: first = before.next
-
-        after = dummy
-        last = None
-        for i in range(n+1):
-            if i == n: last = after
-            after = after.next
-
-        pre = before
-        current = pre.next
-        if n > m:
-            pre = pre.next
-            current = pre.next
-        for i in range(n-m):
-            next = current.next
-            current.next = pre
-            pre = current
-            current = next
-        
-        if before: before.next = last
-        if first: first.next = after
-
-        return dummy.next
-
-    def reverseBetween_0(self, head, m, n):
         dummy = ListNode(-1)
         dummy.next = head
         pre = dummy
-        for _ in range(m-1):
+        for _ in range(m - 1):
             pre = pre.next
+
         current = pre.next
-        for _ in range(n-m):
+        for _ in range(n - m):
             next = current.next
             current.next = next.next
             next.next = pre.next
