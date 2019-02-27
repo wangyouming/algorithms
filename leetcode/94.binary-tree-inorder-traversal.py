@@ -41,6 +41,9 @@ class Solution(object):
         :type root: TreeNode
         :rtype: List[int]
         """
+        return self.inorderTraversal_1(root)
+
+    def inorderTraversal_2(self, root):
         res = []
         stack = []
         if root: stack.append((root, False))
@@ -53,4 +56,26 @@ class Solution(object):
                 stack.append((node, True))
                 if node.left: stack.append((node.left, False))
         return res
-        
+
+    def inorderTraversal_1(self, root):
+        stack = []
+        res = []
+        current = root
+        while stack or current:
+            while current:
+                stack.append(current)
+                current = current.left
+            current = stack.pop()
+            res.append(current.val)
+            current = current.right
+        return res
+    
+    def inorderTraversal_0(self, root):
+        def helper(node, res):
+            if not node: return
+            if node.left: helper(node.left, res)
+            res.append(node.val)
+            if node.right: helper(node.right, res)
+        res = []
+        helper(root, res)
+        return res
