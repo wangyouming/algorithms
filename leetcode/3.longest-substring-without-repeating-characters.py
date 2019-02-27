@@ -67,7 +67,7 @@ class Solution(object):
             j += 1
         return ans
 
-    def lenthOfLongestSubstring_0(self, s):
+    def lengthOfLongestSubstring_0(self, s):
         m = set()
         i = j =0
         ans = 0
