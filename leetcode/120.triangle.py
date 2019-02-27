@@ -33,26 +33,26 @@
 # is the total number of rows in the triangle.
 # 
 #
+from typing import List
+
 class Solution:
     def minimumTotal(self, triangle: List[List[int]]) -> int:
-        return self.minimumTotal_0(triangle)
+        return self.minimumTotal_1(triangle)
+
+    def minimumTotal_1(self, triangle: List[List[int]]) -> int:
+        dp = [0] * len(triangle[-1])
+        for i in range(len(triangle)):
+            for j in range(i, -1, -1):
+                if j == 0: dp[j] = dp[j] + triangle[i][j]
+                elif j == i: dp[j] = dp[j-1] + triangle[i][j]
+                else: dp[j] = min(dp[j-1], dp[j]) + triangle[i][j]
+        return min(dp)
+
+    def minimum_total_0(self, triangle: List[List[int]]) -> int:
+        dp = triangle[-1][:]
+        for i in range(len(triangle)-2, -1, -1):
+            for j in range(i+1):
+                dp[j] = min(dp[j], dp[j+1]) + triangle[i][j]
+        return dp[0]
+
     
-    def minimumTotal_0(self, triangle: List[List[int]]) -> int:
-        mem = {}
-        import sys
-        min_sum = sys.maxsize
-        def bt(i: int, j: int, cur_sum: int) -> None:
-            nonlocal mem, min_sum
-            key = '{}-{}'.format(i, j)
-            if key in mem and cur_sum >= mem[key]:
-                return
-            else:
-                mem[key] = cur_sum
-            cur_sum += triangle[i][j]
-            if i == len(triangle) - 1:
-                min_sum = min(min_sum, cur_sum)
-                return
-            bt(i+1, j, cur_sum)
-            bt(i+1, j+1, cur_sum)
-        bt(0, 0, 0)
-        return min_sum
