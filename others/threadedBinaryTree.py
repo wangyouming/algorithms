@@ -50,24 +50,24 @@ def preThreading(root: ListNode):
     threading(root)
 
 def inorderTraverse(node: ListNode):
-    pre = node
-    while pre:
-        while not pre.is_left_thread:
-            pre = pre.left
-        print(pre.val)
-        while pre.is_right_thread:
-            pre = pre.right
-            print(pre.val)
-        pre = pre.right
+    cur = node
+    while cur:
+        while not cur.is_left_thread:
+            cur = cur.left
+        print(cur.val)
+        while cur.is_right_thread:
+            cur = cur.right
+            print(cur.val)
+        cur = cur.right
 
 def preorderTraverse(node: ListNode):
-    pre = node
-    while pre:
-        print(pre.val)
-        if not pre.is_left_thread:
-            pre = pre.left
+    cur = node
+    while cur:
+        print(cur.val)
+        if not cur.is_left_thread:
+            cur = cur.left
         else:
-            pre = pre.right
+            cur = cur.right
 
 if __name__ == '__main__':
     def createTree() -> ListNode:
