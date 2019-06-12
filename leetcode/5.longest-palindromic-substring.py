@@ -35,18 +35,20 @@
 
 class Solution:
     def longestPalindrome(self, s: str) -> str:
-        if len(s) <= 1: return s
-        max_range = (0, 0)
-        for i in range(1, len(s)):
-            max_len = max_range[1] - max_range[0] + 1
-            if self.isPalindrome(s, i-max_len-1, i):
-                max_range = (i-max_len-1, i)
-            elif self.isPalindrome(s, i-max_len, i):
-                max_range = (i-max_len, i)
-        return s[max_range[0]: max_range[1]+1]
+        res = ""
+        for i in range(len(s)):
+            tmp = self.helper(s, i, i)
+            if len(tmp) > len(res):
+                res = tmp
+
+            tmp = self.helper(s, i, i+1)
+            if len(tmp) > len(res):
+                res = tmp
+        return res
+
+    def helper(self, s: str, l: int, r: int) -> str:
+        while l >= 0 and r < len(s) and s[l] == s[r]:
+            l -= 1
+            r += 1
+        return s[l+1:r]
     
-    def isPalindrome(self, s: str, begin: int, end: int) -> bool:
-        if begin < 0: return False
-        for i in range((end-begin+1)//2):
-            if s[begin+i] != s[end-i]: return False
-        return True
