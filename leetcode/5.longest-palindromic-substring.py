@@ -36,27 +36,17 @@
 class Solution:
     def longestPalindrome(self, s: str) -> str:
         if len(s) <= 1: return s
-        mem = [(0, 0)] * len(s)
-        mem[0] = (0, 0)
+        max_range = (0, 0)
         for i in range(1, len(s)):
-            pre_begin, pre_end = mem[i-1]
-            pre_len = pre_end - pre_begin + 1
-            if self.isPalindrome(s, i-pre_len-1, i):
-                mem[i] = (i-pre_len-1, i)
-            elif self.isPalindrome(s, i-pre_len, i):
-                mem[i] = (i-pre_len, i)
-            else:
-                mem[i] = mem[i-1]
-
-        begin, end = mem[-1]
-        return s[begin:end+1]
+            max_len = max_range[1] - max_range[0] + 1
+            if self.isPalindrome(s, i-max_len-1, i):
+                max_range = (i-max_len-1, i)
+            elif self.isPalindrome(s, i-max_len, i):
+                max_range = (i-max_len, i)
+        return s[max_range[0]: max_range[1]+1]
     
     def isPalindrome(self, s: str, begin: int, end: int) -> bool:
         if begin < 0: return False
         for i in range((end-begin+1)//2):
             if s[begin+i] != s[end-i]: return False
         return True
-
-
-input = "cbbd"
-print(Solution().longestPalindrome(input))
