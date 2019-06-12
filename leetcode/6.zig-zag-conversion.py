@@ -53,24 +53,16 @@
 #
 class Solution:
     def convert(self, s: str, numRows: int) -> str:
-        if numRows <= 1: return s
-
-        rows = [[] for _ in range(numRows)]
-        isIncrease = True
-        row_num = 0
-        for i in range(len(s)):
-            row = rows[row_num]
-            row.append(s[i])
-            if isIncrease:
-                row_num += 1
-                if row_num == numRows:
-                    row_num -= 2
-                    isIncrease = False
-            else:
-                row_num -= 1
-                if row_num < 0:
-                    row_num += 2
-                    isIncrease = True
-
-        rows = ["".join(row) for row in rows]
-        return "".join(rows)
+        if numRows == 1 or len(s) <= numRows:
+            return s
+        
+        rows = [''] * numRows
+        index, step = 0, 1
+        for c in s:
+            rows[index] += c
+            if index == 0:
+                step = 1
+            elif index == numRows - 1:
+                step = -1
+            index += step
+        return ''.join(rows)
