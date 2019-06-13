@@ -81,38 +81,8 @@
 #
 class Solution:
     def intToRoman(self, num: int) -> str:
-        m = {1: 'I', 5: 'V', 10: 'X', 50: 'L', 100: 'C', 500: 'D', 1000: 'M'}
-        nums = [1000, 500, 100, 50, 10, 5, 1]
-        res, index = '', 0
-        while num != 0:
-            count = num // nums[index]
-            num = num % nums[index]
-            res += m[nums[index]]*count
-            if nums[index] == 1000 and num >= 900:
-                res += 'CM'
-                num -= 900
-                index += 2
-            elif nums[index] == 500 and num >= 400:
-                res += 'CD'
-                num -= 400
-                index += 1
-            elif nums[index] == 100 and num >= 90:
-                res += 'XC'
-                num -= 90
-                index += 2
-            elif nums[index] == 50 and num >= 40:
-                res += 'XL'
-                num -= 40
-                index += 1
-            elif nums[index] == 10 and num >= 9:
-                res += 'IX'
-                num -= 9
-                index += 2
-            elif nums[index] == 5 and num >= 4:
-                res += 'IV'
-                num -= 4
-                index += 1
-            else:
-                index += 1
-
-        return res
+        M = ["", "M", "MM", "MMM"]
+        C = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"]
+        X = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"]
+        I = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+        return M[num//1000] + C[(num % 1000)//100] + X[(num % 100)//10] + I[num % 10]
