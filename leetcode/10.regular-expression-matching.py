@@ -88,10 +88,10 @@ class Solution(object):
         :type p: str
         :rtype: bool
         """
-        return self.isMatch_0(s, p)
+        return self.isMatch_2(s, p)
 
     def isMatch_2(self, text, pattern):
-        dp = [[False] * (len(pattern) +1) for _ in range(len(text)+1)]
+        dp = [[False] * (len(pattern) + 1) for _ in range(len(text) + 1)]
         dp[-1][-1] = True
         for i in range(len(text), -1, -1):
             for j in range(len(pattern)-1, -1, -1):
@@ -120,18 +120,9 @@ class Solution(object):
     
     def isMatch_0(self, text, pattern):
         if not pattern: return not text
-        
+
         first_match = bool(text) and pattern[0] in {text[0], '.'}
         if len(pattern) >= 2 and pattern[1] == '*':
-            return self.isMatch_1(text, pattern[2:]) or (first_match and self.isMatch_1(text[1:], pattern))
+            return self.isMatch_0(text, pattern[2:]) or (first_match and self.isMatch_0(text[1:], pattern))
         else:
-            return first_match and self.isMatch_1(text[1:], pattern[1:])
-
-if __name__ == '__main__':
-    solution = Solution()
-    print(solution.isMatch("aa", "a"))
-    print(solution.isMatch("aa", "a*"))
-    print(solution.isMatch("ab", ".*"))
-    print(solution.isMatch("aab", "c*a*b"))
-    print(solution.isMatch("mississippi", "mis*is*p*"))
-        
+            return first_match and self.isMatch_0(text[1:], pattern[1:])
