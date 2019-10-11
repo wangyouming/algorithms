@@ -23,7 +23,7 @@ def kmp(text: str, pattern: str):
         if text[i] == pattern[j]:
             j += 1
         if j == len(pattern):
-            return i - len(pattern) + 1
+            return i + 1- len(pattern)
         i += 1
     return -1
 

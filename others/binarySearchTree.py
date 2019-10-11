@@ -20,7 +20,7 @@ class BinarySearchTree:
             self._root = TreeNode(value)
         else:
             node = self._root
-            parent= node
+            parent = node
             while node:
                 parent = node
                 if value < node._value:
@@ -34,7 +34,6 @@ class BinarySearchTree:
                 parent._left = new_node
             else:
                 parent._right = new_node
-        return True 
 
     def search(self, value):
         res = []
@@ -51,10 +50,7 @@ class BinarySearchTree:
     def delete(self, value):
         del_list = self.search(value)
         for node in del_list:
-            if not node._parent and node != self._root:
-                continue
-            else:
-                self._del(node)
+            self._del(node)
 
     def _del(self, node: TreeNode):
         """
@@ -62,55 +58,20 @@ class BinarySearchTree:
         2. 有一个子节点： 将父节点指向节点的指针指向节点的子节点
         3. 有两个子节点：找到右子树的最小节点M，将值赋值给节点，然后删除M
         """
-        if not node._left and not node._right:
-            if node == self._root:
-                self._root = None
-            else:
-                if node._value < node._parent._value:
-                    node._parent._left = None
-                else:
-                    node._parent._right = None
-                
-                node._parent = None
-        elif not node._left and node._right:
-            if node == self._root:
-                self._root = node._right
-                self._root._parent = None
-                node._right = None
-            else:
-                if node._value < node._parent._value:
-                    node._parent._left = node._right
-                else:
-                    node._parent._right = node._right
-                
-                node._right._parent = node._parent
-                node._parent = None
-                node._right = None
-        elif not node._right and node._left:
-            if node == self._root:
-                self._root = node._left
-                self._root._parent = None
-                node._left = None
-            else:
-                if node._value < node._parent._value:
-                    node._parent._left = node._left
-                else:
-                    node._parent._right = node._left
-                
-                node._left._parent = node._parent
-                node._parent = None
-                node._left = None
-        else:
+        if node._left and node._right:
             min_node = node._right
-            if min_node._left:
+            while min_node._left:
                 min_node = min_node._left
-            
-            if node._value != min_node._value:
-                node._value = min_node._value
-                self._del(min_node)
-            else:
-                self._del(min_node)
-                self._del(node)
+            node._value = min_node._value
+            node = min_node
+        
+        child = None
+        if node._left: child = node._left
+        elif node._right: child = node._right
+
+        if not node._parent: self._root = child
+        elif node._parent._left == node: node._parent._left = child
+        else: node._parent._right = child
 
     def get_min(self):
         if not self._root:

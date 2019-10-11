@@ -1,8 +1,8 @@
 from typing import List, Generator
-import heapq
+from heap import PriorityQueue
 
 class Graph:
-    def __init__(self, vertex_count: int) -> None:
+    def __init__(self, vertex_count: int):
         self.adj = [[] for _ in range(vertex_count)]
     
     def add_edge(self, s: int, t: int, w: int) -> None:
@@ -13,7 +13,7 @@ class Graph:
         return len(self.adj)
     
 class Vertex:
-    def __init__(self, v: int, dist: int) -> None:
+    def __init__(self, v: int, dist: int):
         self.id = v
         self.dist = dist
     
@@ -24,43 +24,23 @@ class Vertex:
         return str((self.id, self.dist))
 
 class Edge:
-    def __init__(self, source: int, target: int, weight: int) -> None:
+    def __init__(self, source: int, target: int, weight: int):
         self.s = source
         self.t = target
         self.w = weight
 
-class VertexPriorityQueue:
-    def __init__(self) -> None:
-        self.vertices = []
-    
-    def get(self) -> Vertex:
-        return heapq.heappop(self.vertices)
-    
-    def put(self, v: Vertex) -> None:
-        self.vertices.append(v)
-        self.update_priority()
-
-    def empty(self) -> bool:
-        return len(self.vertices) == 0
-    
-    def update_priority(self) -> None:
-        heapq.heapify(self.vertices)
-
-    def __repr__(self) -> str:
-        return str(self.vertices)
-
 def dijkstra(g: Graph, s: int, t: int) -> int:
     size = len(g)
-    pq = VertexPriorityQueue()
     in_queue = [False] * size
     vertices = [Vertex(v, float('inf')) for v in range(size)]
     predecessor = [-1] * size
 
     vertices[s].dist = 0
+    pq = PriorityQueue()
     pq.put(vertices[s])
     in_queue[s] = True
 
-    while not pq.empty():
+    while pq:
         v = pq.get()
         if v.id == t:
             break
@@ -69,9 +49,8 @@ def dijkstra(g: Graph, s: int, t: int) -> int:
             if v.dist + edge.w < vertices[edge.t].dist:
                 vertices[edge.t].dist = v.dist + edge.w
                 predecessor[edge.t] = v.id
-                pq.update_priority()
                 if in_queue[edge.t]:
-                    pq.update_priority()
+                    pq.heapup(vertices[edge.t])
                 else:
                     pq.put(vertices[edge.t])
                     in_queue[edge.t] == True

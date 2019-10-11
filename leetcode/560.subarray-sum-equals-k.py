@@ -50,4 +50,3 @@ class Solution(object):
             else:
                 d[total] = 1
         return res
-

@@ -1,4 +1,4 @@
-from collections import deque
+from queue import Queue
 from typing import List
 
 class AcNode:
@@ -14,10 +14,10 @@ class AhoCorasick:
         self._root = AcNode("/")
 
     def _build_fail_pointer(self) -> None:
-        q = deque()
-        q.append(self._root)
+        q = Queue()
+        q.put(self._root)
         while q:
-            node = q.popleft()
+            node = q.get()
             for child in node._children:
                 if not child: continue
                 if node == self._root:
@@ -32,7 +32,7 @@ class AhoCorasick:
                         fail = fail._fail
                     if not fail:
                         child._fail = self._root
-                q.append(child)
+                q.put(child)
     
     def _insert(self, text: str) -> None:
         node = self._root
@@ -60,7 +60,8 @@ class AhoCorasick:
             tmp = node
             while tmp != self._root:
                 if tmp._is_ending_char:
-                    print(f"begin position: {i - tmp._length + 1}, length: {tmp._length}")
+                    r = range(i-tmp._length+1, i+1)
+                    print("{range}: {text}".format(r, text[r.start:r.stop]))
                 tmp = tmp._fail
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ def lcs_0(text_0: str, text_1: str) -> int:
     mem = {}
     def bt(i, j, cur_lcs) -> None:
         key = "{}-{}".format(i, j)
-        if key in mem and cur_lcs < mem[key]:
+        if key in mem and cur_lcs <= mem[key]:
             return
         else:
             mem[key] = cur_lcs

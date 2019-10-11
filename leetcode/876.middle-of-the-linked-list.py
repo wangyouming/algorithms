@@ -72,4 +72,3 @@ class Solution(object):
             walker = walker.next
             runner = runner.next.next
         return walker.next if runner else walker
-        

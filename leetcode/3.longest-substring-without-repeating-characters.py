@@ -53,30 +53,11 @@ class Solution(object):
         :type s: str
         :rtype: int
         """
-        return self.lengthOfLongestSubstring_1(s)
-
-    def lengthOfLongestSubstring_1(self, s):
         m = {}
-        i = j = 0
-        ans = 0
-        while j < len(s):
+        i = ans = 0
+        for j in range(len(s)):
             if s[j] in m:
                 i = max(i, m[s[j]]+1)
-            ans = max(ans, j - i + 1)
+            ans = max(ans, j-i+1)
             m[s[j]] = j
-            j += 1
-        return ans
-
-    def lengthOfLongestSubstring_0(self, s):
-        m = set()
-        i = j =0
-        ans = 0
-        while i < len(s) and j < len(s):
-            if s[j] not in m:
-                m.add(s[j])
-                j += 1
-                ans = max(ans, j - i)
-            else:
-                m.remove(s[i])
-                i += 1
         return ans

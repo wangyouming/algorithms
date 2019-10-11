@@ -38,10 +38,10 @@ class Solution(object):
         :rtype: int
         """
         max_cnt = 0
-        current = 0
+        cur_cnt = 0
         for num in nums:
-            if num == 1: current += 1
-            else: current = 0
-            max_cnt = max(max_cnt, current)
+            if num == 1: 
+                cur_cnt += 1
+                max_cnt = max(max_cnt, cur_cnt)
+            else: cur_cnt = 0
         return max_cnt
-        

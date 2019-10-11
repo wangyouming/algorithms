@@ -1,6 +1,6 @@
 from time import time
 
-def bf(text, pattern):
+def bf(text: str, pattern: str) -> int:
     n = len(text)
     m = len(pattern)
     
@@ -18,7 +18,7 @@ def bf(text, pattern):
                 break
     return -1
 
-def simple_hash(s, start, end):
+def simple_hash(s: str, start: int, end: str) -> int:
     assert(start < end)
     res = 0
     for c in s[start:end]:
@@ -32,14 +32,16 @@ def rk(text, pattern):
     if n <= m:
         return 0 if pattern == text else -1
 
-    hash_memo = [None] * (n-m+1)
-    hash_memo[0] = simple_hash(text, 0, m)
+    hash_mem = [None] * (n-m+1)
+    hash_mem[0] = simple_hash(text, 0, m)
     for i in range(1, n-m+1):
-        hash_memo[i] = hash_memo[i-1] - simple_hash(text, i-1, i) + simple_hash(text, i+m-1, i+m)
+        hash_mem[i] = hash_mem[i-1] - \
+                       simple_hash(text, i-1, i) + \
+                       simple_hash(text, i+m-1, i+m)
     
     pattern_hash = simple_hash(pattern, 0, m)
 
-    for i, h in enumerate(hash_memo):
+    for i, h in enumerate(hash_mem):
         if h == pattern_hash:
             if pattern == text[i:i+m]:
                 return i
@@ -51,18 +53,14 @@ if __name__ == '__main__':
     text = 'a'*10000
     pattern = 'a'*200+'b'
 
-    print('--- time consume ---')
-    t = time()
-    print('[bf] result:', bf(text, pattern))
-    print('[bf] time cost: {0:.5}s'.format(time()-t))
+    begin = time()
+    for _ in range(10):
+        res = bf(text, pattern)
+    end = time()
+    print("[bf] result: {res}, time cost: {time:.5f}".format(res=res, time=end-begin))
 
-    t = time()
-    print('[rk] result:', rk(text, pattern))
-    print('[rk] time cost: {0:.5}s'.format(time()-t))
-
-    print('')
-    print('--- search ---')
-    text = 'the quick brown fox jumps over the lazy dog'
-    pattern = 'jump'
-    print('[bf] result:', bf(text, pattern))
-    print('[rk] result:', rk(text, pattern))
+    begin = time()
+    for _ in range(10):
+        res = rk(text, pattern)
+    end = time()
+    print("[rk] result: {res}, time cost: {time:.5f}".format(res=res, time=end-begin))

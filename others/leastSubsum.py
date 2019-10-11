@@ -1,41 +1,37 @@
-from typing import List, Tuple, Mapping
+from typing import List, Mapping
 
-IndexValue = Tuple[int, int]
-
-def least_subsum_bt(values: List[int], target: int) -> (List[IndexValue], int):
+def least_subsum_0(values: List[int], target: int) -> (List[int], int):
     import sys
     min_sum = sys.maxsize
-    idx_values = []
+    res_indices = []
     mem = set()
     n = len(values)
-    def _least_subsum_bt(idx: int, cur_value: int, candidats: List[IndexValue]):
-        nonlocal min_sum
-        nonlocal idx_values
+    def bt(idx: int, cur_value: int, indices: List[int]):
+        nonlocal min_sum, res_indices
         if cur_value >= target or idx == n:
             if cur_value < min_sum and cur_value >= target:
                 min_sum = cur_value
-                idx_values = candidats
+                res_indices = indices
             return
 
         key = '{}-{}'.format(idx, cur_value)
         if key in mem: return
         mem.add(key)
         
-        _candidates = candidats[:]
-        _candidates.append((idx, values[idx]))
-        _least_subsum_bt(idx+1, cur_value+values[idx], _candidates)
-        _least_subsum_bt(idx+1, cur_value, candidats)
+        _indices = indices[:]
+        _indices.append(idx)
+        bt(idx+1, cur_value+values[idx], _indices)
+        bt(idx+1, cur_value, indices)
 
-    _least_subsum_bt(0, 0, [])
+    bt(0, 0, [])
 
-    return (idx_values, min_sum)
+    return (res_indices, min_sum)
 
-def least_subsum_dp_st(values: List[int], target: int) -> (List[IndexValue], int):
+def least_subsum_1(values: List[int], target: int) -> (List[int], int):
     nums: Mapping[int, List[int]] = {}
     nums[0] = []
     import sys
     min_num = sys.maxsize
-    nums[min_num] = []
     for idx, value in enumerate(values):
         new_nums: Mapping[int, List[int]] = {}
         for num in nums:
@@ -45,40 +41,39 @@ def least_subsum_dp_st(values: List[int], target: int) -> (List[IndexValue], int
             if cur_val >= target:
                 if cur_val >= min_num: continue
                 else: min_num = cur_val
-            idx_vals = nums[num][:]
-            idx_vals.append((idx, value))
-            new_nums[cur_val] = idx_vals
+            indices = nums[num][:]
+            indices.append(idx)
+            new_nums[cur_val] = indices
         nums.update(new_nums)
-    return (nums[min_num], min_num)
+    if min_num in nums:
+        return nums[min_num], min_num
+    else:
+        return [], min_num
 
-def least_subsum_dp_fn(values: List[int], target: int) -> (List[IndexValue], int):
-    #f(idx, val) = min(f(idx+1, val), f(idx+1, val+vals[idx]))
-    idx_values = []
-    import sys
-    min_sum = sys.maxsize
+def least_subsum_2(values: List[int], target: int) -> (List[int], int):
     mem = {}
-    n = len(values)
-    def _least_subsum_dp_fn(cur_idx: int, cur_sum: int, candidates: List[IndexValue]) -> int:
-        nonlocal min_sum
-        nonlocal idx_values
-
-        key = '{}-{}'.format(cur_idx, cur_sum)
+    def dp(cur_idx: int, target: int) -> (List[int], int):
+        key = '{}-{}'.format(cur_idx, target)
         if key in mem: return mem[key]
 
-        if cur_sum >= target or cur_idx == n:
-            if cur_sum < min_sum and cur_sum >= target:
-                min_sum = cur_sum
-                idx_values = candidates
-            res = cur_sum if cur_sum >= target else sys.maxsize
-            mem[key] = res
-            return res
-        
-        _candidates = candidates[:]
-        _candidates.append((cur_idx, values[cur_idx]))
-        return min(_least_subsum_dp_fn(cur_idx+1, cur_sum, candidates), _least_subsum_dp_fn(cur_idx+1, cur_sum+values[cur_idx], _candidates))
+        if cur_idx == len(values) or target <= 0:
+            if target <= 0: return [], 0
+            else:
+                import sys 
+                return [], sys.maxsize
 
-    _least_subsum_dp_fn(0, 0, [])
-    return (idx_values, min_sum) 
+        dp_0 = dp(cur_idx+1, target)
+        dp_1 = dp(cur_idx+1, target-values[cur_idx])
+
+        if dp_0[1] < dp_1[1] + values[cur_idx]:
+            res = dp_0
+        else:
+            res = [cur_idx]+dp_1[0], values[cur_idx]+dp_1[1]
+
+        mem[key] = res
+        return res
+
+    return dp(0, target)
 
 if __name__ == '__main__':
     values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -87,19 +82,25 @@ if __name__ == '__main__':
     import time
 
     last = time.time()
-    print(least_subsum_bt(values, target))
+    for _ in range(10000):
+        res = least_subsum_0(values, target)
     current = time.time()
     print('-'*30)
+    print(res)
     print('{:.10f}'.format(current - last))
 
-    last = current
-    print(least_subsum_dp_st(values, target))
+    last = time.time()
+    for _ in range(10000):
+        res = least_subsum_1(values, target)
     current = time.time()
     print('-'*30)
+    print(res)
     print('{:.10f}'.format(current - last))
 
-    last = current
-    print(least_subsum_dp_fn(values, target))
+    last = time.time()
+    for _ in range(10000):
+        res = least_subsum_2(values, target)
     current = time.time()
     print('-'*30)
+    print(res)
     print('{:.10f}'.format(current - last))

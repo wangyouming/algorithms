@@ -1,5 +1,5 @@
 from typing import List, Optional, Generator, IO
-from collections import deque
+from queue import Queue
 
 class Graph:
     def __init__(self, num_vertices: int):
@@ -20,12 +20,12 @@ class Graph:
         
         visited = [False] * self._num_vertices
         visited[s] = True
-        q = deque()
-        q.append(s)
+        q = Queue()
+        q.put(s)
         prev = [None] * self._num_vertices
 
         while q:
-            v = q.popleft()
+            v = q.get()
             for neighbor in self._adjacency[v]:
                 if not visited[neighbor]:
                     prev[neighbor] = v
@@ -33,7 +33,7 @@ class Graph:
                         print("->".join(self._generate_path(s, t, prev)))
                         return
                     visited[neighbor] = True
-                    q.append(neighbor)
+                    q.put(neighbor)
     
     def dfs(self, s: int, t: int) -> IO[str]:
         found = False

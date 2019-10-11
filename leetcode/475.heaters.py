@@ -67,7 +67,6 @@ class Solution(object):
         :rtype: int
         """
         return self.findRadius_1(houses, heaters)
-        return self.findRadius_0(houses, heaters)
     
     def findRadius_1(self, houses, heaters):
         def binarySearchNearest(target, values):

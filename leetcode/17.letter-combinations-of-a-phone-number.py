@@ -46,13 +46,13 @@ class Solution:
              '7': 'pqrs',
              '8': 'tuv',
              '9': 'wxyz'}
-        def backtrace(combination, next_digits):
-            if len(next_digits) == 0:
-                output.append(combination)
+        def backtracing(cur_str, idx):
+            if idx == len(digits):
+                ans.append(cur_str)
             else:
-                for letter in m[next_digits[0]]:
-                    backtrace(combination + letter, next_digits[1:])
-        output = []
+                for c in m[digits[idx]]:
+                    backtracing(cur_str + c, idx + 1)
+        ans = []
         if digits:
-            backtrace("", digits)
-        return output
+            backtracing("", 0)
+        return ans
