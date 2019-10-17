@@ -48,7 +48,7 @@ class Solution:
         if not nums: return -1
         lo, hi = 0, len(nums) - 1
         while lo <= hi:
-            mid = lo + ((hi - lo) >> 2)
+            mid = lo + ((hi - lo) >> 1)
             if nums[mid] == target:
                 return mid
 
