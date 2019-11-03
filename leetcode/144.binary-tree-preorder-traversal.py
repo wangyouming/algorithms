@@ -42,13 +42,55 @@ class Solution(object):
         :type root: TreeNode
         :rtype: List[int]
         """
-        res = []
-        stack = []
-        if root: stack.append(root)
-        while stack:
-            cur = stack.pop()
-            res.append(cur.val)
-            if cur.right: stack.append(cur.right)
-            if cur.left: stack.append(cur.left)
+        return self.preorderTraversal_3(root)
+
+    def preorderTraversal_3(self, root):
+        pre, cur, res = None, root, []
+        while cur:
+            if not cur.left:
+                res.append(cur.val)
+                cur = cur.right
+            else:
+                pre = cur.left
+                while pre.right and pre.right != cur:
+                    pre = pre.right
+                if not pre.right:
+                    res.append(cur.val)
+                    pre.right, cur = cur, cur.left
+                else:
+                    pre.right = None
+                    cur = cur.right
         return res
-    
+
+    def preorderTraversal_2(self, root):
+        p, s, res = root, [], []
+        while p or s:
+            if p:
+                res.append(p.val)
+                s.append(p)
+                p = p.left
+            else:
+                p = s.pop()
+                p = p.right
+        return res
+
+    def preorderTraversal_1(self, root):
+        p, s, res = root, [], []
+        while p or s:
+            while p:
+                res.append(p.val)
+                s.append(p)
+                p = p.left
+            p = s.pop()
+            p = p.right
+        return res
+
+    def preorderTraversal_0(self, root):
+        s, res = [], []
+        if root: s.append(root)
+        while s:
+            p = s.pop()
+            res.append(p.val)
+            if p.right: s.append(p.right)
+            if p.left: s.append(p.left)
+        return res

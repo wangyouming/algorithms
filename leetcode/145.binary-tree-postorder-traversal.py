@@ -42,31 +42,42 @@ class Solution(object):
         :type root: TreeNode
         :rtype: List[int]
         """
-        return self.postorderTraversal_0(root)
         return self.postorderTraversal_1(root)
+
+    def postorderTraversal_2(self, root):
+        pre, p, s, res = None, root, [], []
+        while p or s:
+            while p:
+                s.append(p)
+                p = p.left
+            p = s[-1]
+            if not p.right or p.right is pre:
+                res.append(p.val)
+                s.pop()
+                pre, p = p, None
+            else:
+                p = p.right
+        return res
     
     def postorderTraversal_1(self, root):
-        res = []
-        stack = []
-        if root: stack.append(root)
-        while stack:
-            cur = stack.pop()
-            res.append(cur.val)
-            if cur.left: stack.append(cur.left)
-            if cur.right: stack.append(cur.right)
-        return res[::-1]
+        p, s, res = root, [], []
+        while p or s:
+            if p:
+                s.append(p)
+                res.insert(0, p.val)
+                p = p.right
+            else:
+                p = s.pop()
+                p = p.left
+        return res
 
     def postorderTraversal_0(self, root):
-        res = []
-        stack = []
-        if root: stack.append((root, False))
-        while stack:
-            node, visted = stack.pop()
-            if visted:
-                res.append(node.val)
-            else:
-                stack.append((node, True))
-                if node.right: stack.append((node.right, False))
-                if node.left: stack.append((node.left, False))
+        s, res = [], []
+        if root: s.append(root)
+        while s:
+            p = s.pop()
+            res.insert(0, p.val)
+            if p.left: s.append(p.left)
+            if p.right: s.append(p.right)
         return res
     

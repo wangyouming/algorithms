@@ -41,41 +41,56 @@ class Solution(object):
         :type root: TreeNode
         :rtype: List[int]
         """
-        return self.inorderTraversal_1(root)
+        return self.inorderTraversal_3(root)
+
+    def inorderTraversal_3(self, root):
+        pre, cur, res = None, root, []
+        while cur:
+            if not cur.left:
+                res.append(cur.val)
+                cur = cur.right
+            else:
+                pre = cur.left
+                while pre.right and pre.right != cur:
+                    pre = pre.right
+                if not pre.right:
+                    pre.right, cur = cur, cur.left
+                else:
+                    pre.right = None
+                    res.append(cur.val)
+                    cur = cur.right
+        return res
 
     def inorderTraversal_2(self, root):
-        res = []
-        stack = []
-        if root: stack.append((root, False))
-        while stack:
-            node, visited = stack.pop()
-            if visited:
-                res.append(node.val)
+        p, s, res = root, [], []
+        while p or s:
+            if p:
+                s.append(p)
+                p = p.left
             else:
-                if node.right: stack.append((node.right, False))
-                stack.append((node, True))
-                if node.left: stack.append((node.left, False))
+                p = s.pop()
+                res.append(p.val)
+                p = p.right
         return res
 
     def inorderTraversal_1(self, root):
-        stack = []
-        res = []
-        current = root
-        while stack or current:
-            while current:
-                stack.append(current)
-                current = current.left
-            current = stack.pop()
-            res.append(current.val)
-            current = current.right
+        p, s, res = root, [], []
+        while p or s:
+            while p:
+                s.append(p)
+                p = p.left
+            p = s.pop()
+            res.append(p.val)
+            p = p.right
         return res
     
     def inorderTraversal_0(self, root):
-        def helper(node, res):
+        def inorder(node, res):
             if not node: return
-            if node.left: helper(node.left, res)
+            if node.left: inorder(node.left, res)
             res.append(node.val)
-            if node.right: helper(node.right, res)
+            if node.right: inorder(node.right, res)
+
         res = []
-        helper(root, res)
+        inorder(root, res)
         return res

@@ -67,10 +67,30 @@ class TreeNode:
 
 class Solution:
     def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        return self.isSameTree_1(p, q)
+        
+    def isSameTree_0(self, p: TreeNode, q: TreeNode) -> bool:
         if p and q: return p.val == q.val and \
                            self.isSameTree(p.left, q.left) and \
                            self.isSameTree(p.right, q.right)
         else:
             return p is q
+    
+    def isSameTree_1(self, p: TreeNode, q: TreeNode) -> bool:
+        s0, s1 = [], []
+        if p: s0.append(p)
+        if q: s1.append(q)
+        while s0 and s1:
+            n0, n1 = s0.pop(), s1.pop()
+            if n0.val != n1.val: return False
+
+            if n0.left: s0.append(n0.left)
+            if n1.left: s1.append(n1.left)
+            if len(s0) != len(s1): return False
         
+            if n0.right: s0.append(n0.right)
+            if n1.right: s1.append(n1.right)
+            if len(s0) != len(s1): return False
+        
+        return len(s0) == len(s1)
 # @lc code=end
