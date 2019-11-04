@@ -44,6 +44,24 @@ from typing import List
 
 class Solution:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        return self.findMedianSortedArrays_1(nums1, nums2)
+
+    def findMedianSortedArrays_1(self, nums1: List[int], nums2: List[int]) -> float:
+        def findKth(nums1: List[int], i: int, nums2: List[int], j: int, k: int) -> int:
+            if i >= len(nums1): return nums2[j+k-1]
+            if j >= len(nums2): return nums1[i+k-1]
+            if k == 1: return min(nums1[i], nums2[j])
+            import sys
+            x = nums1[i+k//2-1] if i+k//2-1 < len(nums1) else sys.maxsize
+            y = nums2[j+k//2-1] if j+k//2-1 < len(nums2) else sys.maxsize
+            if x < y: return findKth(nums1, i+k//2, nums2, j, k-k//2)
+            else: return findKth(nums1, i, nums2, j+k//2, k-k//2)
+    
+        m, n = len(nums1), len(nums2)
+        left, right = (m + n + 1) // 2, (m + n + 2) //2
+        return (findKth(nums1, 0, nums2, 0, left)+findKth(nums1, 0, nums2, 0, right)) * 0.5
+
+    def findMedianSortedArrays_0(self, nums1: List[int], nums2: List[int]) -> float:
         m, n = len(nums1), len(nums2)
         if m > n:
             m, n, nums1, nums2 = n, m, nums2, nums1
@@ -70,4 +88,3 @@ class Solution:
                 else: min_of_right = min(nums1[i], nums2[j])
                 
                 return (max_of_left + min_of_right) / 2
-
